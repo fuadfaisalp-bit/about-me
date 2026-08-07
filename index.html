@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fuad Faisal P | Automation & Control Systems Engineer @ Cedas International</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            industrial: {
+              900: '#0a0e17',
+              800: '#111827',
+              700: '#1e293b',
+              amber: '#f59e0b',
+              cyan: '#06b6d4',
+              alert: '#ef4444',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0a0e17;
+      color: #e2e8f0;
+    }
+    .scanlines {
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0,0,0,0.1) 50%,
+        rgba(0,0,0,0.1)
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+    @keyframes flicker {
+      0% { opacity: 0.97; }
+      5% { opacity: 0.99; }
+      10% { opacity: 0.94; }
+      15% { opacity: 0.98; }
+      20% { opacity: 0.96; }
+      100% { opacity: 0.97; }
+    }
+    .crt-flicker {
+      animation: flicker 4s infinite;
+    }
+    @keyframes pulse-led {
+      0%, 100% { box-shadow: 0 0 2px #10b981; opacity: 1; }
+      50% { box-shadow: 0 0 8px #10b981; opacity: 0.6; }
+    }
+    .led-green {
+      animation: pulse-led 2s infinite;
+    }
+    .typing-cursor::after {
+      content: '_';
+      animation: blink1s step-start infinite;
+      color: #f59e0b;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+ }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f59e0b;
+    }
+    .grid-bg {
+      background-image: 
+        linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased relative">
+
+<div class="fixed inset-0 z-50 scanlines pointer-events-none"></div>
+
+<nav class="fixed top-0 w-full z-40 bg-industrial-900/80 backdrop-blur-md border-b border-industrial-700/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="font-mono font-bold text-xl tracking-tighter text-industrial-amber">
+        <span class="text-industrial-cyan">&lt;</span>FF<span class="text-industrial-cyan">/&gt;</span>
+      </div>
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-8 font-mono text-sm">
+          <a href="#about" class="hover:text-industrial-amber transition-colors">[01] ABOUT</a>
+          <a href="#skills" class="hover:text-industrial-amber transition-colors">[02] SKILLS</a>
+          <a href="#projects" class="hover:text-industrial-amber transition-colors">[03] PROJECTS</a>
+          <a href="#github" class="hover:text-industrial-amber transition-colors">[04] GITHUB</a>
+          <a href="#contact" class="hover:text-industrial-amber transition-colors">[05] CONTACT</a>
+        </div>
+      </div>
+      <div class="md:hidden">
+        <button id="mobile-menu-btn" class="text-industrial-amber focus:outline-none">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden bg-industrial-900 border-b border-industrial-700/50">
+    <div class="px-2 pt-2 pb-3 space-y-1 font-mono text-sm">
+      <a href="#about" class="block px-3 py-2 hover:text-industrial-amber">[01] ABOUT</a>
+      <a href="#skills" class="block px-3 py-2 hover:text-industrial-amber">[02] SKILLS</a>
+      <a href="#projects" class="block px-3 py-2 hover:text-industrial-amber">[03] PROJECTS</a>
+      <a href="#github" class="block px-3 py-2 hover:text-industrial-amber">[04] GITHUB</a>
+      <a href="#contact" class="block px-3 py-2 hover:text-industrial-amber">[05] CONTACT</a>
+    </div>
+  </div>
+</nav>
+
+<section class="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden grid-bg">
+  <canvas id="networkCanvas" class="absolute inset-0 w-full h-full opacity-40 pointer-events-none"></canvas>
+  
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-industrial-800/50 border border-industrial-700/50 text-xs font-mono text-industrial-cyan mb-6 backdrop-blur-sm">
+      <span class="w-2 h-2 rounded-full bg-green-500 led-green"></span>
+      SYSTEM ONLINE — DEPLOYED_AT_CEDAS
+    </div>
+    
+    <h1 class="text-5xl md:text-7xl font-bold font-mono tracking-tight mb-4 crt-flicker">
+      FUAD FAISAL <span class="text-industrial-amber">P</span>
+    </h1>
+    
+    <div class="text-lg md:text-2xl font-mono text-slate-300 mb-6 h-8">
+      <span id="typewriter" class="typing-cursor"></span>
+    </div>
+    
+    <p class="max-w-2xl mx-auto text-slate-400 mb-8">
+          Automation & Control Systems Engineer specializing in PLC-based industrial control, 
+      Python-driven automation workflows, and SCADA/HMI system integration. 
+      Currently deployed at Cedas International — delivering digital automation solutions
+      for process industries across US, Europe, and India.
+    </p>
+    
+    <div class="flex flex-wrap justify-center gap-4 mb-12 text-sm font-mono text-slate-400">
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-industrial-amber"></span>Chennai, Tamil Nadu</span>
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-industrial-cyan"></span>Cedas International</span>
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Passport Available</span>
+    </div>
+    
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="#projects" class="px-6 py-3 bg-industrial-amber text-industrial-900 font-bold font-mono rounded hover:bg-amber-400 transition-colors">VIEW PROJECTS</a>
+      <a href="#contact" class="px-6 py-3 border border-industrial-amber text-industrial-amber font-mono rounded hover:bg-industrial-amber/10 transition-colors">INITIATE CONTACT</a>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="py-20 bg-industrial-800/30 border-t border-industrial-700/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div class="reveal">
+        <h2 class="text-industrial-cyan font-mono text-sm mb-2">[01] PROFILE</h2>
+        <h3 class="text-3xl md:text-4xl font-bold mb-6">Engineering the Interface Between <span class="text-industrial-amber">Machines</span> and <span class="text-industrial-cyan">Intelligence</span></h3>
+        <p class="text-slate-400 leading-relaxed mb-6">
+          Mechatronics Engineering graduate with hands-on experience in PLC-based industrial control, Python-driven automation workflows, and system integration across embedded and industrial environments. Skilled in Siemens TIA Portal, PLCSIM, WinCC HMI, and OPC-UA/Modbus communication protocols.
+        </p>
+        <p class="text-slate-400 leading-relaxed mb-6">
+          Currently working as a Graduate Engineer Trainee at Cedas International Pvt. Ltd., Chennai — an industrial automation company executing projects for US and European clients. Part of a global team spanning Denmark, USA, and India, delivering customized digital automation solutions for process industries.
+        </p>
+        <div class="flex gap-4">
+          <a id="email-about" class="text-industrial-amber font-mono hover:underline cursor-pointer"></a>
+          <a href="https://www.cedas.dk/en" target="_blank" class="text-industrial-cyan font-mono hover:underline">cedas.dk</a>
+        </div>
+      </div>
+      
+      <div class="reveal bg-industrial-900 border border-industrial-700/50 rounded-lg p-6 font-mono text-sm shadow-2xl shadow-industrial-cyan/5">
+        <div class="flex items-center justify-between mb-4 border-b border-industrial-700/50 pb-2">
+          <span class="text-industrial-amber font-bold">SYSTEM_INFO.exe</span>
+          <span class="text-slate-500 text-xs">v2.6.0</span>
+        </div>
+        <div class="space-y-3 text-slate-300">
+          <div class="flex justify-between"><span class="text-slate-500">Name:</span> <span>Fuad Faisal P</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Role:</span> <span>Graduate Engineer Trainee</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Location:</span> <span>Chennai, Tamil Nadu, IN</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Company:</span> <span class="text-industrial-cyan">Cedas International Pvt. Ltd.</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Experience:</span> <span>6 Mo internship + Projects + Current</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Status:</span> <span class="text-industrial-amber">ON_ACTIVE_DUTY</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Mobility:</span> <span class="text-industrial-cyan">Global (US, EU, India)</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Passport:</span> <span class="text-green-400">VALID</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Uptime:</span> <span id="uptime">Calculating...</span></div>
+        </div>
+        <div class="mt-6 pt-4 border-t border-industrial-700/50">
+          <div class="text-xs text-slate-500 mb-2">Languages.dll</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-2 py-1 bg-industrial-800 rounded text-xs border border-industrial-700">English: IELTS_7</span>
+            <span class="px-2 py-1 bg-industrial-800 rounded text-xs border border-industrial-700">Malayalam: NATIVE</span>
+            <span class="px-2 py-1 bg-industrial-800 rounded text-xs border border-industrial-700">Hindi</span>
+            <span class="px-2 py-1 bg-industrial-800 rounded text-xs border border-industrial-700">Arabic_Basic</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="py-20 relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-12 reveal">
+      <h2 class="text-industrial-cyan font-mono text-sm mb-2">[02] TECHNICAL_ARSENAL</h2>
+      <h3 class="text-3xl md:text-4xl font-bold">Skills & <span class="text-industrial-amber">Competencies</span></h3>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="reveal bg-industrial-900/50 border border-industrial-700/50 p-6 rounded-lg hover:border-industrial-amber/50 transition-all hover:-translate-y-1 group">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded bg-industrial-800 flex items-center justify-center text-industrial-amber border border-industrial-700 group-hover:border-industrial-amber/50">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h4 class="font-bold font-mono text-lg">PLC & Control</h4>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">TIA Portal V17</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">S7-PLCSIM</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Ladder Logic</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">FBD / STL</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Function Blocks</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">PID_Compact</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">PROFINET</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Allen-Bradley</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Safety Interlocks</span>
+        </div>
+      </div>
+      
+      <div class="reveal bg-industrial-900/50 border border-industrial-700/50 p-6 rounded-lg hover:border-industrial-cyan/50 transition-all hover:-translate-y-1 group">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded bg-industrial-800 flex items-center justify-center text-industrial-cyan border border-industrial-700 group-hover:border-industrial-cyan/50">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h4 class="font-bold font-mono text-lg">SCADA & HMI</h4>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">WinCC Runtime</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Alarm Management</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Factory I/O</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">VFD</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">HMI Development</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">SCADA Fundamentals</span>
+        </div>
+      </div>
+      
+      <div class="reveal bg-industrial-900/50 border border-industrial-700/50 p-6 rounded-lg hover:border-green-500/50 transition-all hover:-translate-y-1 group">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded bg-industrial-800 flex items-center justify-center text-green-400 border border-industrial-700 group-hover:border-green-500/50">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          </div>
+          <h4 class="font-bold font-mono text-lg">Industrial Python & Data</h4>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">pymodbus RTU/TCP</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">opcua-asyncio</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">SQLite Historian</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Streamlit</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">MQTT</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Python</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">MATLAB</span>
+        </div>
+      </div>
+      
+      <div class="reveal bg-industrial-900/50 border border-industrial-700/50 p-6 rounded-lg hover:border-purple-500/50 transition-all hover:-translate-y-1 group">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded bg-industrial-800 flex items-center justify-center text-purple-400 border border-industrial-700 group-hover:border-purple-500/50">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          </div>
+          <h4 class="font-bold font-mono text-lg">Embedded & Design</h4>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Arduino</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">ESP32</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">DC Motor Control</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Sensor Integration</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">SolidWorks</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">Rhino</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">CoppeliaSim</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">LabVIEW</span>
+          <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">ANSYS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="py-20 bg-industrial-800/30 border-t border-industrial-700/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-12 reveal">
+      <h2 class="text-industrial-cyan font-mono text-sm mb-2">[03] PORTFOLIO_PROJECTS</h2>
+      <h3 class="text-3xl md:text-4xl font-bold">Selected <span class="text-industrial-amber">Works</span></h3>
+    </div>
+    
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div class="reveal group bg-industrial-900 border border-industrial-700/50 rounded-xl overflow-hidden hover:border-industrial-cyan/50 transition-all">
+        <div class="h-48 bg-gradient-to-br from-industrial-800 to-industrial-900 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-20" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0iIzA2YjZkNCIvPjwvc3ZnPg==');"></div>
+          <div class="absolute bottom-4 left-4">
+            <span class="px-2 py-1 bg-industrial-cyan/20 text-industrial-cyan text-xs font-mono border border-industrial-cyan/30 rounded">PYTHON</span>
+            <span class="px-2 py-1 bg-industrial-cyan/20 text-industrial-cyan text-xs font-mono border border-industrial-cyan/30 rounded ml-2">IIoT</span>
+          </div>
+        </div>
+        <div class="p-6">
+          <h4 class="text-xl font-bold font-mono mb-2 group-hover:text-industrial-cyan transition-colors">Industrial Process Dashboard</h4>
+          <p class="text-slate-400 text-sm mb-4">
+            OPC-UA + Modbus Data Pipeline with SQLite historian and Streamlit visualization. Polls simulated PLC registers at 1-second scan rates with live trend charts and alarm state display.
+          </p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="text-xs text-slate-500 font-mono">pymodbus</span>
+            <span class="text-xs text-slate-500 font-mono">opcua-asyncio</span>
+            <span class="text-xs text-slate-500 font-mono">SQLite</span>
+            <span class="text-xs text-slate-500 font-mono">Streamlit</span>
+          </div>
+          <a href="https://github.com/fuadfaisalp-bit" target="_blank" class="inline-flex items-center gap-2 text-industrial-amber font-mono text-sm hover:underline">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            VIEW_SOURCE </a>
+        </div>
+      </div>
+      
+      <div class="reveal group bg-industrial-900 border border-industrial-700/50 rounded-xl overflow-hidden hover:border-industrial-amber/50 transition-all">
+        <div class="h-48 bg-gradient-to-br from-industrial-800 to-industrial-900 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-20" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0iI2Y1OWUwYiIvPjwvc3ZnPg==');"></div>
+          <div class="absolute bottom-4 left-4">
+            <span class="px-2 py-1 bg-industrial-amber/20 text-industrial-amber text-xs font-mono border border-industrial-amber/30 rounded">SIEMENS</span>
+            <span class="px-2 py-1 bg-industrial-amber/20 text-industrial-amber text-xs font-mono border border-industrial-amber/30 rounded ml-2">PLC</span>
+          </div>
+        </div>
+        <div class="p-6">
+          <h4 class="text-xl font-bold font-mono mb-2 group-hover:text-industrial-amber transition-colors">Conveyor & Packaging Line</h4>
+          <p class="text-slate-400 text-sm mb-4">
+            TIA Portal PLC Simulation with modular Function Blocks, Ladder logic, Factory I/O integration, PID_Compact speed tuning, and WinCC HMI with alarm management panels.
+          </p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="text-xs text-slate-500 font-mono">TIA Portal V17</span>
+            <span class="text-xs text-slate-500 font-mono">S7-PLCSIM</span>
+            <span class="text-xs text-slate-500 font-mono">Factory I/O</span>
+            <span class="text-xs text-slate-500 font-mono">WinCC</span>
+ </div>
+          <a href="https://github.com/fuadfaisalp-bit" target="_blank" class="inline-flex items-center gap-2 text-industrial-amber font-mono text-sm hover:underline">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            VIEW_SOURCE
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 grid md:grid-cols-2 gap-6 reveal">
+      <div class="border border-industrial-700/30 rounded-lg p-5 bg-industrial-900/30">
+        <h5 class="font-mono font-bold text-industrial-cyan mb-2">Smart IoT Air Conditioning</h5>
+        <p class="text-slate-400 text-sm mb-3">ESP32, MQTT, state-machine logic, SSR load switching with hysteresis-based closed-loop control and fault detection.</p>
+        <div class="flex gap-2">
+          <span class="text-xs font-mono bg-industrial-800 px-2 py-0.5 rounded text-slate-400">ESP32</span>
+          <span class="text-xs font-mono bg-industrial-800 px-2 py-0.5 rounded text-slate-400">MQTT</span>
+        </div>
+      </div>
+      <div class="border border-industrial-700/30 rounded-lg p-5 bg-industrial-900/30">
+        <h5 class="font-mono font-bold text-industrial-amber mb-2">Self-Balancing Robot</h5>
+        <p class="text-slate-400 text-sm mb-3">CoppeliaSim simulation with PID and LQR control algorithms using Python-based real-time feedback loops.</p>
+        <div class="flex gap-2">
+          <span class="text-xs font-mono bg-industrial-800 px-2 py-0.5 rounded text-slate-400">CoppeliaSim</span>
+          <span class="text-xs font-mono bg-industrial-800 px-2 py-0.5 rounded text-slate-400">PID / LQR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="github" class="py-20 relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 reveal">
+      <div>
+        <h2 class="text-industrial-cyan font-mono text-sm mb-2">[04] GIT_REPO_FETCH</h2>
+        <h3 class="text-3xl md:text-4xl font-bold">Live from <span class="text-industrial-amber">GitHub</span></h3>
+      </div>
+      <a href="https://github.com/fuadfaisalp-bit" target="_blank" class="mt-4 md:mt-0 inline-flex items-center gap-2 text-slate-400 hover:text-industrial-amber font-mono text-sm transition-colors">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        github.com/fuadfaisalp-bit
+      </a>
+    </div>
+    
+    <div id="repo-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a href="https://github.com/fuadfaisalp-bit/industrial-process-dashboard" target="_blank" class="group block bg-industrial-900 border border-industrial-700/50 rounded-lg p-5 hover:border-industrial-cyan/50 transition-all hover:-translate-y-1">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-mono font-bold text-industrial-amber group-hover:text-industrial-cyan transition-colors truncate pr-2">industrial-process-dashboard</h4>
+          <svg class="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </div>
+        <p class="text-slate-400 text-xs mb-4">Real-time Modbus & OPC UA monitoring dashboard built with Python.</p>
+        <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+            <span>Python</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-industrial-800 rounded text-[10px] border border-industrial-700">IIoT</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/fuadfaisalp-bit/industrial-functional-safety" target="_blank" class="group block bg-industrial-900 border border-industrial-700/50 rounded-lg p-5 hover:border-industrial-amber/50 transition-all hover:-translate-y-1">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-mono font-bold text-industrial-amber group-hover:text-industrial-cyan transition-colors truncate pr-2">industrial-functional-safety</h4>
+          <svg class="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </div>
+        <p class="text-slate-400 text-xs mb-4">Industrial functional safety concepts, standards, and examples.</p>
+        <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span>Safety</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-industrial-800 rounded text-[10px] border border-industrial-700">IEC 61508</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/fuadfaisalp-bit/Machine-Safety-Industrial-Communication" target="_blank" class="group block bg-industrial-900 border border-industrial-700/50 rounded-lg p-5 hover:border-industrial-cyan/50 transition-all hover:-translate-y-1">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-mono font-bold text-industrial-amber group-hover:text-industrial-cyan transition-colors truncate pr-2">Machine-Safety-Industrial-Comm...</h4>
+          <svg class="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </div>
+        <p class="text-slate-400 text-xs mb-4">Notes and resources on machine safety and industrial networks.</p>
+        <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span>Safety</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-industrial-800 rounded text-[10px] border border-industrial-700">Networks</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/fuadfaisalp-bit/factoryio-height-sorting-system" target="_blank" class="group block bg-industrial-900 border border-industrial-700/50 rounded-lg p-5 hover:border-industrial-amber/50 transition-all hover:-translate-y-1">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-mono font-bold text-industrial-amber group-hover:text-industrial-cyan transition-colors truncate pr-2">factoryio-height-sorting-system</h4>
+          <svg class="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </div>
+        <p class="text-slate-400 text-xs mb-4">PLC-based Factory I/O height sorting automation project.</p>
+        <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>Siemens</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-industrial-800 rounded text-[10px] border border-industrial-700">PLC</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/fuadfaisalp-bit/plc-tank-level-pid-control-system" target="_blank" class="group block bg-industrial-900 border border-industrial-700/50 rounded-lg p-5 hover:border-industrial-cyan/50 transition-all hover:-translate-y-1">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-mono font-bold text-industrial-amber group-hover:text-industrial-cyan transition-colors truncate pr-2">plc-tank-level-pid-control-system</h4>
+          <svg class="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </div>
+        <p class="text-slate-400 text-xs mb-4">Siemens PLC PID control for automated tank level regulation.</p>
+        <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>Siemens</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-industrial-800 rounded text-[10px] border border-industrial-700">PLC</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/fuadfaisalp-bit/plc-tank-level-pid-hmi-system" target="_blank" class="group block bg-industrial-900 border border-industrial-700/50 rounded-lg p-5 hover:border-industrial-amber/50 transition-all hover:-translate-y-1">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-mono font-bold text-industrial-amber group-hover:text-industrial-cyan transition-colors truncate pr-2">plc-tank-level-pid-hmi-system</h4>
+          <svg class="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </div>
+        <p class="text-slate-400 text-xs mb-4">PLC PID tank level control with WinCC HMI visualization.</p>
+        <div class="flex items-center justify-between text-xs font-mono text-slate-500">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>Siemens</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-industrial-800 rounded text-[10px] border border-industrial-700">HMI</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="py-20 bg-industrial-800/30 border-y border-industrial-700/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-12 reveal">
+      <h2 class="text-industrial-cyan font-mono text-sm mb-2">[05] SYSTEM_LOG</h2>
+      <h3 class="text-3xl md:text-4xl font-bold">Experience & <span class="text-industrial-amber">Education</span></h3>
+      <p class="text-slate-400 text-sm mt-2 font-mono">Now part of a global team — <span class="text-industrial-cyan">Denmark</span> · <span class="text-industrial-amber">USA</span> · <span class="text-green-400">India</span></p>
+    </div>
+    
+    <div class="relative">
+      <div class="absolute left-4 md:left-1/2 h-full w-px bg-industrial-700/50"></div>
+      
+      <div class="relative mb-12 reveal">
+        <div class="md:flex items-center justify-between">
+          <div class="md:w-1/2 md:pr-12"></div>
+          <div class="absolute left-4 md:left-1/2 w-3 h-3 bg-industrial-amber rounded-full -translate-x-1.5 md:-translate-x-1.5 border-2 border-industrial-900 mt-6 md:mt-0"></div>
+          <div class="md:w-1/2 md:pl-12">
+            <div class="bg-industrial-900 border border-industrial-amber/30 p-6 rounded-lg shadow-lg shadow-industrial-amber/5">
+              <span class="text-industrial-amber font-mono text-xs">2026 — PRESENT</span>
+              <h4 class="text-lg font-bold mt-1">Graduate Engineer Trainee</h4>
+              <p class="text-industrial-cyan font-mono text-sm mb-2">Cedas International Pvt. Ltd., Chennai</p>
+              <ul class="text-slate-400 text-sm list-disc list-inside space-y-1">
+                <li>Industrial automation engineering for process industries</li>
+                <li>Executing projects for US and European clients</li>
+                <li>Part of global team — Denmark, USA & India</li>
+                <li>Customized digital automation solutions & project execution</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative mb-12 reveal">
+        <div class="md:flex items-center justify-between">
+          <div class="md:w-1/2 md:pr-12 md:text-right">
+            <div class="bg-industrial-900 border border-industrial-700/50 p-6 rounded-lg inline-block text-left md:text-right w-full">
+              <span class="text-industrial-amber font-mono text-xs">2025 — 6 MONTHS</span>
+              <h4 class="text-lg font-bold mt-1">Engineering Intern</h4>
+              <p class="text-industrial-cyan font-mono text-sm mb-2">Halcon Caravans (via Deep Thought), Kerala</p>
+              <ul class="text-slate-400 text-sm list-disc list-inside space-y-1">
+                <li>Designed 12V DC solar electrical system for production caravan unit</li>
+                <li>Full SolidWorks CAD layout for interior/exterior</li>
+                <li>Coordinated intern team through manufacturing & QA</li>
+              </ul>
+            </div>
+          </div>
+          <div class="absolute left-4 md:left-1/2 w-3 h-3 bg-industrial-amber rounded-full -translate-x-1.5 md:-translate-x-1.5 border-2 border-industrial-900 mt-6 md:mt-0"></div>
+          <div class="md:w-1/2 md:pl-12"></div>
+        </div>
+      </div>
+      
+      <div class="relative mb-12 reveal">
+        <div class="md:flex items-center justify-between">
+          <div class="md:w-1/2 md:pr-12"></div>
+          <div class="absolute left-4 md:left-1/2 w-3 h-3 bg-industrial-cyan rounded-full -translate-x-1.5 md:-translate-x-1.5 border-2 border-industrial-900 mt-6 md:mt-0"></div>
+          <div class="md:w-1/2 md:pl-12">
+            <div class="bg-industrial-900 border border-industrial-700/50 p-6 rounded-lg">
+              <span class="text-industrial-cyan font-mono text-xs">2022 — 2026</span>
+              <h4 class="text-lg font-bold mt-1">B.E. Mechatronics Engineering</h4>
+              <p class="text-slate-400 text-sm">Hindustan College of Engineering and Technology, Tamil Nadu</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-16 reveal">
+      <h4 class="font-mono font-bold text-industrial-amber mb-4 text-center">CERTIFICATIONS_LOADOUT</h4>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-industrial-900/50 border border-industrial-700/30 p-4 rounded hover:border-industrial-amber/50 transition-colors">
+          <div class="text-xs font-mono text-slate-500 mb-1">2024</div>
+          <div class="font-bold text-sm">Industrial Automation Training</div>
+        </div>
+        <div class="bg-industrial-900/50 border border-industrial-700/30 p-4 rounded hover:border-industrial-amber/50 transition-colors">
+          <div class="text-xs font-mono text-slate-500 mb-1">2023</div>
+          <div class="font-bold text-sm">Python Programming — Udemy</div>
+        </div>
+        <div class="bg-industrial-900/50 border border-industrial-700/30 p-4 rounded hover:border-industrial-amber/50 transition-colors">
+          <div class="text-xs font-mono text-slate-500 mb-1">2025</div>
+          <div class="font-bold text-sm">NPTEL Management & Leadership</div>
+          <div class="text-xs text-slate-400">Anna University / IIT</div>
+        </div>
+        <div class="bg-industrial-900/50 border border-industrial-700/30 p-4 rounded hover:border-industrial-amber/50 transition-colors">
+          <div class="text-xs font-mono text-slate-500 mb-1">2022</div>
+          <div class="font-bold text-sm">Learnathon Certification</div>
+          <div class="text-xs text-slate-400">ICT Academy (MS, AWS, Google, MathWorks)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="py-20 relative">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+    <h2 class="text-industrial-cyan font-mono text-sm mb-2">[06] ESTABLISH_CONNECTION</h2>
+    <h3 class="text-3xl md:text-5xl font-bold mb-6">Currently <span class="text-industrial-amber">Integrated</span></h3>
+    <p class="text-slate-400 mb-10 max-w-xl mx-auto">
+      Currently deployed at Cedas International Pvt. Ltd. — delivering industrial automation solutions for process industries across US, Europe, and India. Always open to connect.
+    </p>
+    
+    <div class="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto mb-10 text-left font-mono text-sm">
+      <a href="https://wa.me/917591969123?text=Hi%20Fuad" target="_blank" class="flex items-center gap-3 p-4 bg-industrial-900 border border-industrial-700/50 rounded hover:border-industrial-amber transition-colors min-w-[200px]">
+        <span class="text-industrial-amber">></span> +91 75919 69123
+      </a>
+      <a id="email-contact" class="flex items-center gap-3 p-4 bg-industrial-900 border border-industrial-700/50 rounded hover:border-industrial-amber transition-colors min-w-[200px] cursor-pointer">
+      </a>
+      <a href="https://www.linkedin.com/in/-fuadfaisal-" target="_blank" class="flex items-center gap-3 p-4 bg-industrial-900 border border-industrial-700/50 rounded hover:border-industrial-cyan transition-colors min-w-[200px]">
+        <span class="text-industrial-cyan">></span> linkedin.com/in/-fuadfaisal-
+      </a>
+      <a href="https://github.com/fuadfaisalp-bit" target="_blank" class="flex items-center gap-3 p-4 bg-industrial-900 border border-industrial-700/50 rounded hover:border-industrial-cyan transition-colors min-w-[200px]">
+        <span class="text-industrial-cyan">></span> github.com/fuadfaisalp-bit
+      </a>
+      <a href="https://www.cedas.dk/en" target="_blank" class="flex items-center gap-3 p-4 bg-industrial-900 border border-industrial-700/50 rounded hover:border-industrial-amber transition-colors min-w-[200px]">
+        <span class="text-industrial-amber">></span> cedas.dk
+      </a>
+    </div>
+    
+    <div class="inline-block text-left bg-industrial-900 border border-industrial-700/50 p-6 rounded-lg font-mono text-xs sm:text-sm text-slate-300 shadow-lg">
+      <div class="text-slate-500 mb-2">$ contact --initiate</div>
+      <div class="mb-1"><span class="text-green-500">✓</span> Passport status: <span class="text-green-400">VALID</span></div>
+      <div class="mb-1"><span class="text-green-500">✓</span> Current role: <span class="text-industrial-amber">GET @ Cedas International</span></div>
+      <div class="mb-1"><span class="text-green-500">✓</span> Work authorization: <span class="text-green-400">INDIA / GCC / GLOBAL PROJECTS</span></div>
+      <div class="mt-2 text-industrial-cyan animate-pulse">System operational. Open to connect.</div>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-industrial-700/30 py-8 bg-industrial-900">
+  <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 font-mono text-xs">
+    <p>Engineered by Fuad Faisal P | Built with HTML + Tailwind + JS</p>
+    <p class="mt-1 text-slate-600">System Version 1.0.0 | Last Boot: <span id="last-boot"></span></p>
+  </div>
+</footer>
+
+<script>
+  // Mobile Menu Toggle
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+  menu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => menu.classList.add('hidden'));
+  });
+
+  // Email Protection Bypass
+  const emailUser = 'fuadfaisalp';
+  const emailDomain = 'gmail.com';
+  const emailAddr = emailUser + '@' + emailDomain;
+  const emailAbout = document.getElementById('email-about');
+  const emailContact = document.getElementById('email-contact');
+  if (emailAbout) {
+    emailAbout.href = 'mailto:' + emailAddr;
+    emailAbout.textContent = emailAddr;
+  }
+  if (emailContact) {
+    emailContact.href = 'mailto:' + emailAddr;
+    emailContact.innerHTML = '<span class="text-industrial-amber">></span> ' + emailAddr;
+  }
+
+  // Typing Effect
+  const roles = ["PLC Programmer", "SCADA Developer", "Python Automation Engineer", "Industrial IoT Integrator", "Control Systems Engineer"];
+  let roleIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+  const typeSpeed = 100;
+  const deleteSpeed = 50;
+  const pauseTime = 2000;
+  const typewriter = document.getElementById('typewriter');
+
+  function typeLoop() {
+    const current = roles[roleIndex];
+    if (isDeleting) {
+      typewriter.textContent = current.substring(0, charIndex - 1);
+      charIndex--;
+    } else {
+      typewriter.textContent = current.substring(0, charIndex + 1);
+      charIndex++;
+    }
+
+    let nextSpeed = isDeleting ? deleteSpeed : typeSpeed;
+
+    if (!isDeleting && charIndex === current.length) {
+      nextSpeed = pauseTime;
+      isDeleting = true;
+    } else if (isDeleting && charIndex === 0) {
+      isDeleting = false;
+      roleIndex = (roleIndex + 1) % roles.length;
+      nextSpeed = 500;
+    }
+
+    setTimeout(typeLoop, nextSpeed);
+  }
+  document.addEventListener('DOMContentLoaded', typeLoop);
+
+  // Uptime Clock
+  const uptimeEl = document.getElementById('uptime');
+  const pageLoad = new Date();
+  setInterval(() => {
+    const now = new Date();
+    const diff = Math.floor((now - pageLoad) / 1000);
+    const h = Math.floor(diff / 3600).toString().padStart(2,'0');
+    const m = Math.floor((diff % 3600) / 60).toString().padStart(2,'0');
+    const s = (diff % 60).toString().padStart(2,'0');
+    uptimeEl.textContent = `00d:${h}:${m}:${s}`;
+  }, 1000);
+
+  // Last Boot Time
+  const bootEl = document.getElementById('last-boot');
+  const bootOptions = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  bootEl.textContent = new Date().toLocaleDateString('en-GB', bootOptions);
+
+  // Scroll Reveal
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Canvas Network Animation
+  const canvas = document.getElementById('networkCanvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let particles = [];
+  
+  function resize() {
+    width = canvas.width = canvas.offsetWidth;
+    height = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  
+  class Particle {
+    constructor() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.size = Math.random() * 2 + 1;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0 || this.x > width) this.vx *= -1;
+      if (this.y < 0 || this.y > height) this.vy *= -1;
+    }
+    draw() {
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.5)';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  for (let i = 0; i < 40; i++) particles.push(new Particle());
+  
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+    particles.forEach((p, i) => {
+      p.update();
+      p.draw();
+      for (let j = i + 1; j < particles.length; j++) {
+        const p2 = particles[j];
+        const dx = p.x - p2.x;
+        const dy = p.y - p2.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 150) {
+          ctx.strokeStyle = `rgba(6, 182, 212, ${0.15 * (1 - dist/150)})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+      }
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a275c2060b4f7ecd',t:'MTc4NjEwMDIxOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
