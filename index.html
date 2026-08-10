@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230a0e17'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='bold'%3E%3Ctspan fill='%2306b6d4'%3E%26lt;%3C/tspan%3E%3Ctspan fill='%23f59e0b'%3EFF%3C/tspan%3E%3Ctspan fill='%2306b6d4'%3E/%26gt;%3C/tspan%3E%3C/text%3E%3C/svg%3E">
   <title>Fuad Faisal P | Automation & Control Systems Engineer @ Cedas International</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,6 +104,7 @@
 </head>
 <body class="font-sans antialiased relative">
 
+<div id="scroll-progress" class="fixed top-0 left-0 h-[3px] z-[60] bg-gradient-to-r from-industrial-amber to-industrial-cyan transition-all duration-150" style="width:0%"></div>
 <div class="fixed inset-0 z-50 scanlines pointer-events-none"></div>
 
 <nav class="fixed top-0 w-full z-40 bg-industrial-900/80 backdrop-blur-md border-b border-industrial-700/50">
@@ -171,6 +173,10 @@
     <div class="flex flex-wrap justify-center gap-4">
       <a href="#projects" class="px-6 py-3 bg-industrial-amber text-industrial-900 font-bold font-mono rounded hover:bg-amber-400 transition-colors">VIEW PROJECTS</a>
       <a href="#contact" class="px-6 py-3 border border-industrial-amber text-industrial-amber font-mono rounded hover:bg-industrial-amber/10 transition-colors">INITIATE CONTACT</a>
+      <a href="Resume_Fuad_Faisal_.pdf" download class="px-6 py-3 border border-industrial-cyan text-industrial-cyan font-bold font-mono rounded hover:bg-industrial-cyan/10 transition-colors flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        DOWNLOAD CV
+      </a>
     </div>
   </div>
 </section>
@@ -303,6 +309,40 @@
           <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">CoppeliaSim</span>
           <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">LabVIEW</span>
           <span class="px-2 py-1 bg-industrial-800/80 rounded text-xs border border-industrial-700 text-slate-300">ANSYS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 reveal">
+      <h4 class="font-mono font-bold text-industrial-amber mb-4 text-center text-sm">INDUSTRY_STACK.exe</h4>
+      <div class="flex flex-wrap justify-center gap-4">
+        <div class="flex items-center gap-2 px-4 py-2 bg-industrial-900 border border-industrial-700/50 rounded-lg hover:border-industrial-amber/50 transition-colors">
+          <svg class="w-6 h-6 text-industrial-amber" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <div>
+            <div class="font-mono font-bold text-xs text-industrial-amber">SIEMENS</div>
+            <div class="text-[10px] text-slate-500">TIA Portal · S7 · WinCC</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-industrial-900 border border-industrial-700/50 rounded-lg hover:border-industrial-cyan/50 transition-colors">
+          <svg class="w-6 h-6 text-industrial-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+          <div>
+            <div class="font-mono font-bold text-xs text-industrial-cyan">ALLEN-BRADLEY</div>
+            <div class="text-[10px] text-slate-500">ControlLogix · Studio 5000</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-industrial-900 border border-industrial-700/50 rounded-lg hover:border-green-500/50 transition-colors">
+          <svg class="w-6 h-6 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h8"/><circle cx="18" cy="18" r="3"/></svg>
+          <div>
+            <div class="font-mono font-bold text-xs text-green-400">MODBUS</div>
+            <div class="text-[10px] text-slate-500">RTU · TCP · pymodbus</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-industrial-900 border border-industrial-700/50 rounded-lg hover:border-purple-500/50 transition-colors">
+          <svg class="w-6 h-6 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          <div>
+            <div class="font-mono font-bold text-xs text-purple-400">OPC-UA</div>
+            <div class="text-[10px] text-slate-500">opcua-asyncio · Server/Client</div>
+          </div>
         </div>
       </div>
     </div>
@@ -636,9 +676,25 @@
 </section>
 
 <footer class="border-t border-industrial-700/30 py-8 bg-industrial-900">
-  <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 font-mono text-xs">
-    <p>Engineered by Fuad Faisal P | Built with HTML + Tailwind + JS</p>
-    <p class="mt-1 text-slate-600">System Version 1.0.0 | Last Boot: <span id="last-boot"></span></p>
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex flex-wrap justify-center gap-8 mb-6 font-mono text-sm">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-industrial-amber">5000<span class="text-industrial-cyan">+</span></div>
+        <div class="text-xs text-slate-500 mt-1">Lines of Ladder Logic</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-industrial-cyan">8<span class="text-industrial-amber">+</span></div>
+        <div class="text-xs text-slate-500 mt-1">Projects</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-400">∞</div>
+        <div class="text-xs text-slate-500 mt-1">Cups of Chai ☕</div>
+      </div>
+    </div>
+    <div class="text-center text-slate-500 font-mono text-xs">
+      <p>Engineered by Fuad Faisal P | Built with HTML + Tailwind + JS</p>
+      <p class="mt-1 text-slate-600">System Version 1.0.0 | Last Boot: <span id="last-boot"></span></p>
+    </div>
   </div>
 </footer>
 
@@ -702,6 +758,15 @@
     setTimeout(typeLoop, nextSpeed);
   }
   document.addEventListener('DOMContentLoaded', typeLoop);
+
+  // Scroll Progress Bar
+  const progressBar = document.getElementById('scroll-progress');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = scrollPercent + '%';
+  });
 
   // Uptime Clock
   const uptimeEl = document.getElementById('uptime');
@@ -792,5 +857,5 @@
   animate();
 </script>
 
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a275d30b6d28298c',t:'MTc4NjEwMDkxNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28ea4be8c4458b8',t:'MTc4NjM2MTE2NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
