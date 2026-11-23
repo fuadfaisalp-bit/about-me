@@ -133,6 +133,114 @@
         linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
       background-size: 40px 40px;
     }
+    .glitch-text {
+      position: relative;
+      display: inline-block;
+      color: #f59e0b;
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
+      animation: glitch-skew 4.2s infinite linear alternate-reverse;
+    }
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .glitch-text::before {
+      color: #06b6d4;
+      z-index: -1;
+      animation: glitch-slice-cyan 3.8s infinite linear;
+    }
+    .glitch-text::after {
+      color: #ef4444;
+      z-index: -2;
+      animation: glitch-slice-red 3.8s infinite linear;
+    }
+    .glitch-text:hover {
+      animation-duration: 0.9s;
+    }
+    .glitch-text:hover::before,
+    .glitch-text:hover::after {
+      animation-duration: 0.8s;
+    }
+    @keyframes glitch-slice-cyan {
+      0%, 76%, 100% {
+        clip-path: inset(0 0 100% 0);
+        transform: translate(0);
+      }
+      78% {
+        clip-path: inset(12% 0 58% 0);
+        transform: translate(-3px, -1px);
+      }
+      81% {
+        clip-path: inset(62% 0 10% 0);
+        transform: translate(3px, 1px);
+      }
+      84% {
+        clip-path: inset(30% 0 42% 0);
+        transform: translate(-4px, 0);
+      }
+      87% {
+        clip-path: inset(75% 0 4% 0);
+        transform: translate(2px, -1px);
+      }
+      90% {
+        clip-path: inset(8% 0 74% 0);
+        transform: translate(-2px, 1px);
+      }
+      92% {
+        clip-path: inset(0 0 100% 0);
+        transform: translate(0);
+      }
+    }
+    @keyframes glitch-slice-red {
+      0%, 76%, 100% {
+        clip-path: inset(0 0 100% 0);
+        transform: translate(0);
+      }
+      79% {
+        clip-path: inset(54% 0 16% 0);
+        transform: translate(3px, 1px);
+      }
+      82% {
+        clip-path: inset(15% 0 65% 0);
+        transform: translate(-3px, -1px);
+      }
+      85% {
+        clip-path: inset(70% 0 6% 0);
+        transform: translate(4px, 0);
+      }
+      88% {
+        clip-path: inset(25% 0 48% 0);
+        transform: translate(-2px, 1px);
+      }
+      91% {
+        clip-path: inset(42% 0 32% 0);
+        transform: translate(2px, -1px);
+      }
+      93% {
+        clip-path: inset(0 0 100% 0);
+        transform: translate(0);
+      }
+    }
+    @keyframes glitch-skew {
+      0%, 80%, 92%, 100% { transform: skewX(0deg); }
+      82% { transform: skewX(-2deg); }
+      84% { transform: skewX(2.5deg); }
+      86% { transform: skewX(-1deg); }
+      88% { transform: skewX(1.5deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .glitch-text,
+      .glitch-text::before,
+      .glitch-text::after {
+        animation: none !important;
+      }
+    }
   </style>
 </head>
 <body class="font-sans antialiased relative">
@@ -711,7 +819,7 @@
 <section id="contact" class="py-20 relative">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
     <h2 class="text-industrial-cyan font-mono text-sm mb-2">[06] ESTABLISH_CONNECTION</h2>
-    <h3 class="text-3xl md:text-5xl font-bold mb-6">Currently <span class="text-industrial-amber">Integrated</span></h3>
+    <h3 class="text-3xl md:text-5xl font-bold mb-6">Currently <span class="glitch-text text-industrial-amber" data-text="Integrated">Integrated</span></h3>
     <p class="text-slate-400 mb-10 max-w-xl mx-auto">
       Currently deployed at Cedas International Pvt. Ltd., delivering industrial automation solutions for process industries across the US and Europe. Always open to connect.
     </p>
